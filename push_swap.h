@@ -6,7 +6,7 @@
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 11:58:01 by mhaddad           #+#    #+#             */
-/*   Updated: 2026/02/12 17:32:52 by mhaddad          ###   ########.fr       */
+/*   Updated: 2026/02/14 16:58:26 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,23 +16,21 @@
 # include <unistd.h>
 # include <stdlib.h>
 
-
-int		disorder_calc(t_stack **a);
-void	disorder_check(t_stack **a, t_stack **b);
-void	sort_controller(t_stack **a, t_stack **b);
-int		main(int argc, char **argv);
-
-
-int		parse_bench(char **argv);
-int		parse_flags(char **argv);
+typedef struct s_node
+{
+	int				value;
+	ssize_t			index;
+	struct s_node	*next;
+	struct s_node	*prev;
+}	t_node;
 
 typedef struct s_stack
 {
-	int	value;
-	int	index;
-	struct s_stack	*next;
-	struct s_stack	*prev;
+	size_t		size;
+	t_node		*top;
+	t_node		*tail;
 }	t_stack;
+
 
 typedef struct operation
 {
@@ -49,5 +47,41 @@ typedef struct operation
 	int	rrr;
 	int	total;
 }	t_operation;
+
+/*main*/
+/* int		disorder_calc(t_stack *a); */
+void	disorder_check(t_stack *a, t_stack *b);
+void	sort_controller(t_stack	*a, t_stack *b);
+int		main(int argc, char **argv);
+
+/*parse*/
+/* int		parse_bench(char **argv);
+int		parse_flags(char **argv); */
+
+/*stack*/
+t_node	*new_node(int val);
+void	stack_add_back(t_stack *stack, t_node *node_to_add);
+int		is_sorted(t_stack *a);
+
+/*utils*/
+int		atoi(const char *str);
+
+/* algo */
+void	tiny_sort(t_stack *stack);
+void	node_index(t_stack *stack);
+
+/* operations */
+void	pa(t_stack *b, t_stack *a);
+void	pb(t_stack *a, t_stack *b);
+void	rra(t_stack *a);
+void	rrb(t_stack *b);
+void	rrr(t_stack *a, t_stack *b);
+void	ra(t_stack *a);
+void	rb(t_stack *b);
+void	rr(t_stack *a, t_stack *b);
+void	sa(t_stack *a);
+void	sb(t_stack *b);
+void	ss(t_stack *a, t_stack *b);
+
 
 #endif
