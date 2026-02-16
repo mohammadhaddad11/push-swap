@@ -6,7 +6,7 @@
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/11 14:20:24 by aselfrie          #+#    #+#             */
-/*   Updated: 2026/02/14 15:48:04 by mhaddad          ###   ########.fr       */
+/*   Updated: 2026/02/14 19:41:03 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ static void	push(t_stack *from, t_stack *to)
 	if (to->top)
 		to->top->prev = tmp;
 	to->top = tmp;
+	from->size -= 1;
+	to->size += 1;
 }
 
 void	pa(t_stack *b, t_stack *a)

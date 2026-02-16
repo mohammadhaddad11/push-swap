@@ -6,7 +6,7 @@
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 11:58:01 by mhaddad           #+#    #+#             */
-/*   Updated: 2026/02/14 16:58:26 by mhaddad          ###   ########.fr       */
+/*   Updated: 2026/02/16 10:35:11 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # include <unistd.h>
 # include <stdlib.h>
+# include "libft/libft.h"
+# include "printf/ft_printf.h"
 
 typedef struct s_node
 {
@@ -65,10 +67,12 @@ int		is_sorted(t_stack *a);
 
 /*utils*/
 int		atoi(const char *str);
+size_t	node_counter(t_node *current, int i);
 
 /* algo */
 void	tiny_sort(t_stack *stack);
 void	node_index(t_stack *stack);
+void	selection_sort(t_stack *a, t_stack *b);
 
 /* operations */
 void	pa(t_stack *b, t_stack *a);

@@ -6,7 +6,7 @@
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/11 14:36:46 by aselfrie          #+#    #+#             */
-/*   Updated: 2026/02/14 15:56:06 by mhaddad          ###   ########.fr       */
+/*   Updated: 2026/02/15 13:52:45 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 static void	rotate(t_stack *stack)
 {
-	t_node *old_top;
-	t_node *last;
-	
+	t_node	*old_top;
+	t_node	*last;
+
 	if (!stack || !stack->top || !stack->top->next)
 		return ;
 	old_top = stack->top;

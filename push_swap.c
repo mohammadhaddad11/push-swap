@@ -6,7 +6,7 @@
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 12:24:41 by mhaddad           #+#    #+#             */
-/*   Updated: 2026/02/14 17:02:08 by mhaddad          ###   ########.fr       */
+/*   Updated: 2026/02/16 09:57:44 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,19 +72,18 @@ int	build(int argc, char **argv, t_stack *a)
 
 void	sort_controller(t_stack	*a, t_stack *b)
 {
-	(void)b;
 	if (a->size == 2)
 		sa(a);
 	else if (a->size == 3)
 		tiny_sort(a);
-	/*else if (a->size == 4 || a->size == 5)
-		selection_sort(a);
-	else if (a->size > 5)
+	else if (a->size > 3)
+		selection_sort(a, b);
+	/*else if (a->size > 5)
 		disorder_check(a, b);
 	else
 	{
 		error_exit();
-	}*/
+	} */
 }
 
 int	main(int argc, char **argv)

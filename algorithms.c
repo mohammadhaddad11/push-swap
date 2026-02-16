@@ -6,7 +6,7 @@
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/12 08:38:37 by aselfrie          #+#    #+#             */
-/*   Updated: 2026/02/14 17:30:20 by mhaddad          ###   ########.fr       */
+/*   Updated: 2026/02/16 09:54:23 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,28 +14,58 @@
 
 void	tiny_sort(t_stack *stack)
 {
-	if (stack->top->index == 0 && stack->top->next->index == 2)
+	int	x;
+	int	y;
+	int	z;
+
+	x = stack->top->index;
+	y = stack->top->next->index;
+	z = stack->top->next->next->index;
+	if (x < y && x < z && y > z)
 	{
 		sa(stack);
 		ra(stack);
 	}
-	else if (stack->top->index == 1 && stack->top->next->index == 0)
+	else if (x > y && x < z && y < z)
 		sa(stack);
-	else if (stack->top->index == 1 && stack->top->next->index == 2)
+	else if (x < y && x > z && y > z)
 		rra(stack);
-	else if (stack->top->index == 2 && stack->top->next->index == 0)
+	else if (x > y && x > z && y < z)
 		ra(stack);
-	else if (stack->top->index == 2 && stack->top->next->index == 1)
+	else if (x > y && x > z && y > z)
 	{
 		ra(stack);
 		sa(stack);
 	}
 }
 
-void	short_sort()
+void	selection_sort(t_stack *a, t_stack *b)
 {
-	if
+	int	i;
+
+	i = 0;
+	while (a->size != 3)
+	{
+		while (a->top->index != i)
+		{
+			if (node_counter(a->top, i) <= (a->size + 1) / 2)
+				ra(a);
+			else
+				rra(a);
+		}
+		pb(a, b);
+		i++;
+	}
+	tiny_sort(a);
+	while (b->size != 0)
+		pa(b, a);
 }
-void	simple_sort(){}
-void	chunk_sort(){}
-void	radix_sort(){}
+
+void	chunk_sort()
+{
+
+}
+void	radix_sort()
+{
+
+}
