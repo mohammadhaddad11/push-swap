@@ -6,10 +6,10 @@
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 19:14:39 by mhaddad           #+#    #+#             */
-/*   Updated: 2025/12/24 17:21:03 by mhaddad          ###   ########.fr       */
+/*   Updated: 2026/02/16 16:41:38 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "libft.h"
+
 
 static int	is_space(char c)
 {
@@ -18,11 +18,11 @@ static int	is_space(char c)
 	return (0);
 }
 
-int	ft_atoi(const char *str)
+long	ft_atoi(const char *str)
 {
-	int	i;
-	int	sign;
-	int	result;
+	int		i;
+	int		sign;
+	long	result;
 
 	i = 0;
 	sign = 1;

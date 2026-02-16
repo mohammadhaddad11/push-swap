@@ -6,13 +6,14 @@
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 11:58:01 by mhaddad           #+#    #+#             */
-/*   Updated: 2026/02/16 10:35:11 by mhaddad          ###   ########.fr       */
+/*   Updated: 2026/02/16 16:46:10 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PUSH_SWAP_H
 # define PUSH_SWAP_H
 
+# include <limits.h>
 # include <unistd.h>
 # include <stdlib.h>
 # include "libft/libft.h"
@@ -32,7 +33,6 @@ typedef struct s_stack
 	t_node		*top;
 	t_node		*tail;
 }	t_stack;
-
 
 typedef struct operation
 {
@@ -64,9 +64,8 @@ int		parse_flags(char **argv); */
 t_node	*new_node(int val);
 void	stack_add_back(t_stack *stack, t_node *node_to_add);
 int		is_sorted(t_stack *a);
-
+void	init_stack(t_stack *a, t_stack *b);
 /*utils*/
-int		atoi(const char *str);
 size_t	node_counter(t_node *current, int i);
 
 /* algo */

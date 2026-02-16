@@ -6,7 +6,7 @@
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 12:24:41 by mhaddad           #+#    #+#             */
-/*   Updated: 2026/02/16 09:57:44 by mhaddad          ###   ########.fr       */
+/*   Updated: 2026/02/16 17:19:40 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,25 +50,6 @@ float	disorder_calc(t_stack *a)
 		chunk_sort(a, b);
 } */
 
-int	build(int argc, char **argv, t_stack *a)
-{
-	t_node	*new;
-	int		i;
-	int		value;
-
-	i = 1;
-	while (i < argc)
-	{
-		value = atoi(argv[i]);
-		new = new_node(value);
-		if (!new)
-			return (1);
-		stack_add_back(a, new);
-		i++;
-	}
-
-	return (0);
-}
 
 void	sort_controller(t_stack	*a, t_stack *b)
 {
@@ -95,21 +76,14 @@ int	main(int argc, char **argv)
 	b = malloc(sizeof(t_stack));
 	if (!a || !b)
 		return (1);
-/* 	a->size = 0;
-	a->top = NULL;
-	a->tail = NULL;
-	b->size = 0;
-	b->top = NULL;
-	b->tail = NULL; */
+	init_stack(a, b);
 	if (argc < 2)
 		return (0);
-	if (build(argc, argv, a) == 1)
-		return (1);
+	build(argc, argv, a, b);
 	node_index(a);
 	if (!is_sorted(a))
 		sort_controller(a, b);
-
-	/* free_stack(a);
-	free_stack(b); */
+	free_stack(a);
+	free_stack(b);
 	return (0);
 }
