@@ -6,13 +6,13 @@
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/12 08:38:37 by aselfrie          #+#    #+#             */
-/*   Updated: 2026/02/16 16:48:35 by mhaddad          ###   ########.fr       */
+/*   Updated: 2026/02/17 18:01:09 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-void	tiny_sort(t_stack *stack)
+void	tiny_sort(t_stack *stack, t_bench *op)
 {
 	int	x;
 	int	y;
@@ -23,23 +23,23 @@ void	tiny_sort(t_stack *stack)
 	z = stack->top->next->next->index;
 	if (x < y && x < z && y > z)
 	{
-		sa(stack);
-		ra(stack);
+		sa(stack, op);
+		ra(stack, op);
 	}
 	else if (x > y && x < z && y < z)
-		sa(stack);
+		sa(stack, op);
 	else if (x < y && x > z && y > z)
-		rra(stack);
+		rra(stack, op);
 	else if (x > y && x > z && y < z)
-		ra(stack);
+		ra(stack, op);
 	else if (x > y && x > z && y > z)
 	{
-		ra(stack);
-		sa(stack);
+		ra(stack, op);
+		sa(stack, op);
 	}
 }
 
-void	selection_sort(t_stack *a, t_stack *b)
+void	selection_sort(t_stack *a, t_stack *b, t_bench *op)
 {
 	int	i;
 
@@ -49,23 +49,28 @@ void	selection_sort(t_stack *a, t_stack *b)
 		while (a->top->index != i)
 		{
 			if (node_counter(a->top, i) <= (a->size + 1) / 2)
-				ra(a);
+				ra(a, op);
 			else
-				rra(a);
+				rra(a, op);
 		}
-		pb(a, b);
+		pb(a, b, op);
 		i++;
 	}
-	tiny_sort(a);
+	tiny_sort(a, op);
 	while (b->size != 0)
-		pa(b, a);
+		pa(b, a, op);
 }
 
-void	chunk_sort()
+void	chunk_sort(t_stack *a, t_stack *b, t_bench *op)
 {
-
+	(void)a;
+	(void)b;
+	(void)op;
 }
-void	radix_sort()
+
+void	radix_sort(t_stack *a, t_stack *b, t_bench *op)
 {
-	
+	(void)a;
+	(void)b;
+	(void)op;
 }

@@ -6,11 +6,26 @@
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 13:31:19 by mhaddad           #+#    #+#             */
-/*   Updated: 2026/02/16 17:20:07 by mhaddad          ###   ########.fr       */
+/*   Updated: 2026/02/17 17:59:12 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "push_swap.h"
+#include "../push_swap.h"
+
+void	free_numbers(char **numbers)
+{
+	int	i;
+
+	if (!numbers)
+		return ;
+	i = 0;
+	while (numbers[i])
+	{
+		free(numbers[i]);
+		i++;
+	}
+	free(numbers);
+}
 
 static void	stack_build(t_stack *a, t_stack *b, char **numbers)
 {
@@ -18,10 +33,12 @@ static void	stack_build(t_stack *a, t_stack *b, char **numbers)
 	long	value;
 	t_node	*new;
 
+	if (!numbers)
+		error_exit(a, b, numbers);
 	j = 0;
 	while (numbers[j])
 	{
-		num_checker(a, b, numbers[j]);
+		num_checker(a, b, numbers, j);
 		value = ft_atoi(numbers[j]);
 		if (value > INT_MAX || value < INT_MIN)
 			error_exit(a, b, numbers);
@@ -31,17 +48,17 @@ static void	stack_build(t_stack *a, t_stack *b, char **numbers)
 		dup_checker(a, b, numbers, value);
 		stack_add_back(a, new);
 		j++;
-		free(numbers);
 	}
+	free_numbers(numbers);
 }
 
-void	build(int argc, char **argv, t_stack *a, t_stack *b)
+void	build(int argc, char **argv, t_stack *a, t_stack *b, t_bench *mode)
 {
 	int		i;
 	char	**numbers;
 
 	i = 1;
-	i += parse_offset(argv);
+	i += ft_offset(argv, mode);
 	while (i < argc)
 	{
 		numbers = ft_split(argv[i], ' ');
@@ -50,14 +67,16 @@ void	build(int argc, char **argv, t_stack *a, t_stack *b)
 	}
 }
 
-void	num_checker(t_stack *a, t_stack *b, char **numbers)
+void	num_checker(t_stack *a, t_stack *b, char **numbers, int j)
 {
 	int	i;
 
 	i = 0;
-	while (numbers[i])
+	if (numbers[j][i] == '-' || numbers[j][i] == '+')
+		i++;
+	while (numbers[j][i])
 	{
-		if (!ft_isdigit(numbers[i]) && numbers[i] != ' ')
+		if (!ft_isdigit(numbers[j][i]) && numbers[j][i] != ' ')
 			error_exit(a, b, numbers);
 		i++;
 	}
@@ -76,14 +95,5 @@ void	dup_checker(t_stack *a, t_stack *b, char **numbers, int value)
 	}
 }
 
-int	ft_strcmp(const char *s1, const char *s2)
-{
-	while (*s1 && *s2 && *s1 == *s2)
-	{
-		s1++;
-		s2++;
-	}
-	return ((unsigned char ) *s1 - (unsigned char ) *s2);
-}
 
 

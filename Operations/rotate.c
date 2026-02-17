@@ -6,7 +6,7 @@
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/11 14:36:46 by aselfrie          #+#    #+#             */
-/*   Updated: 2026/02/15 13:52:45 by mhaddad          ###   ########.fr       */
+/*   Updated: 2026/02/17 17:46:50 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,20 +30,27 @@ static void	rotate(t_stack *stack)
 	old_top->next = NULL;
 }
 
-void	ra(t_stack *a)
+void	ra(t_stack *a, t_bench *op)
 {
 	rotate(a);
+	op->ra++;
+	op->total++;
 	write(1, "ra\n", 3);
 }
 
-void	rb(t_stack *b)
+void	rb(t_stack *b, t_bench *op)
 {
 	rotate(b);
+	op->rb++;
+	op->total++;
 	write(1, "rb\n", 3);
 }
 
-void	rr(t_stack *a, t_stack *b)
+void	rr(t_stack *a, t_stack *b, t_bench *op)
 {
-	ra(a);
-	rb(b);
+	rotate(a);
+	rotate(b);
+	write(1, "rr\n", 3);
+	op->rr++;
+	op->total++;
 }

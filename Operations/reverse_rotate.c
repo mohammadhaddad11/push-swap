@@ -6,7 +6,7 @@
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/11 15:25:10 by aselfrie          #+#    #+#             */
-/*   Updated: 2026/02/16 17:22:58 by mhaddad          ###   ########.fr       */
+/*   Updated: 2026/02/17 17:47:36 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,20 +31,27 @@ static	void	reverse_rotate(t_stack *stack)
 	stack->top = old_last;
 }
 
-void	rra(t_stack *a)
+void	rra(t_stack *a, t_bench *op)
 {
 	reverse_rotate(a);
+	op->rra++;
+	op->total++;
 	write(1, "rra\n", 4);
 }
 
-void	rrb(t_stack *b)
+void	rrb(t_stack *b, t_bench *op)
 {
 	reverse_rotate(b);
+	op->rrb++;
+	op->total++;
 	write(1, "rrb\n", 4);
 }
 
-void	rrr(t_stack *a, t_stack *b)
+void	rrr(t_stack *a, t_stack *b, t_bench *op)
 {
-	rra(a);
-	rrb(b);
+	reverse_rotate(a);
+	reverse_rotate(b);
+	write(1, "rrr\n", 4);
+	op->rrr++;
+	op->total++;
 }

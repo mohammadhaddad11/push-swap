@@ -6,11 +6,11 @@
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/12 16:54:27 by mhaddad           #+#    #+#             */
-/*   Updated: 2026/02/16 16:54:30 by mhaddad          ###   ########.fr       */
+/*   Updated: 2026/02/17 11:32:37 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "push_swap.h"
+#include "../push_swap.h"
 
 t_node	*new_node(int val)
 {
@@ -73,16 +73,22 @@ void	init_stack(t_stack *a, t_stack *b)
 
 void	free_stack(t_stack *a, t_stack *b)
 {
-	int		i;
 	t_node	*current;
+	t_node	*next;
 
-	i = 0;
 	current = a->top;
-	while (i < a->size)
+	while (current)
 	{
-		current = a->top;
-		a->top = a->next;
+		next = current->next;
 		free(current);
+		current = next;
+	}
+	current = b->top;
+	while (current)
+	{
+		next = current->next;
+		free(current);
+		current = next;
 	}
 	free(a);
 	free(b);

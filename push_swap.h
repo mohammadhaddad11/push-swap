@@ -6,7 +6,7 @@
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 11:58:01 by mhaddad           #+#    #+#             */
-/*   Updated: 2026/02/16 16:46:10 by mhaddad          ###   ########.fr       */
+/*   Updated: 2026/02/17 18:02:38 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include "libft/libft.h"
-# include "printf/ft_printf.h"
+# include "dprintf/ft_dprintf.h"
 
 typedef struct s_node
 {
@@ -34,7 +34,7 @@ typedef struct s_stack
 	t_node		*tail;
 }	t_stack;
 
-typedef struct operation
+typedef struct bench
 {
 	int	sa;
 	int	sb;
@@ -47,44 +47,59 @@ typedef struct operation
 	int	rra;
 	int	rrb;
 	int	rrr;
+	int	mode;
+	int	adaptive_mode;
+	int	bench_mode;
 	int	total;
-}	t_operation;
+}	t_bench;
 
 /*main*/
-/* int		disorder_calc(t_stack *a); */
-void	disorder_check(t_stack *a, t_stack *b);
-void	sort_controller(t_stack	*a, t_stack *b);
+float	disorder_calc(t_stack *a);
+/* void	disorder_check(t_stack *a, t_stack *b); */
+void	sort_controller(t_stack	*a, t_stack *b, t_bench *mode);
 int		main(int argc, char **argv);
 
 /*parse*/
-/* int		parse_bench(char **argv);
-int		parse_flags(char **argv); */
-
+void	parse_flags(char **argv, t_bench *Stage);
+int		ft_offset(char **argv, t_bench *mode);
 /*stack*/
 t_node	*new_node(int val);
 void	stack_add_back(t_stack *stack, t_node *node_to_add);
 int		is_sorted(t_stack *a);
 void	init_stack(t_stack *a, t_stack *b);
+void	free_stack(t_stack *a, t_stack *b);
 /*utils*/
 size_t	node_counter(t_node *current, int i);
+void	build(int argc, char **argv, t_stack *a, t_stack *b, t_bench *mode);
+int		ft_strcmp(const char *s1, const char *s2);
+void	num_checker(t_stack *a, t_stack *b, char **numbers, int j);
+void	dup_checker(t_stack *a, t_stack *b, char **numbers, int value);
+void	free_numbers(char **numbers);
+void	error_exit(t_stack *a, t_stack *b, char **numbers);
+
+
 
 /* algo */
-void	tiny_sort(t_stack *stack);
+void	tiny_sort(t_stack *stack, t_bench *op);
 void	node_index(t_stack *stack);
-void	selection_sort(t_stack *a, t_stack *b);
+void	selection_sort(t_stack *a, t_stack *b, t_bench *op);
+void	chunk_sort(t_stack *a, t_stack *b, t_bench *op);
+void	radix_sort(t_stack *a, t_stack *b, t_bench *op);
 
 /* operations */
-void	pa(t_stack *b, t_stack *a);
-void	pb(t_stack *a, t_stack *b);
-void	rra(t_stack *a);
-void	rrb(t_stack *b);
-void	rrr(t_stack *a, t_stack *b);
-void	ra(t_stack *a);
-void	rb(t_stack *b);
-void	rr(t_stack *a, t_stack *b);
-void	sa(t_stack *a);
-void	sb(t_stack *b);
-void	ss(t_stack *a, t_stack *b);
+void	pa(t_stack *b, t_stack *a, t_bench *op);
+void	pb(t_stack *a, t_stack *b, t_bench *op);
+void	rra(t_stack *a, t_bench *op);
+void	rrb(t_stack *b, t_bench *op);
+void	rrr(t_stack *a, t_stack *b, t_bench *op);
+void	ra(t_stack *a, t_bench *op);
+void	rb(t_stack *b, t_bench *op);
+void	rr(t_stack *a, t_stack *b, t_bench *op);
+void	sa(t_stack *a, t_bench *op);
+void	sb(t_stack *b, t_bench *op);
+void	ss(t_stack *a, t_stack *b, t_bench *op);
 
+/*bench*/
+void	bench(float disorder, t_bench *mode);
 
 #endif
