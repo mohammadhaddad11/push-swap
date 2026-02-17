@@ -6,7 +6,7 @@
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 15:01:26 by mhaddad           #+#    #+#             */
-/*   Updated: 2026/02/17 17:59:22 by mhaddad          ###   ########.fr       */
+/*   Updated: 2026/02/18 01:28:22 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,17 +55,14 @@ void	error_exit(t_stack *a, t_stack *b, char **numbers)
 	exit(1);
 }
 
-int	ft_offset(char **argv, t_bench *Stage)
+int	ft_offset(t_bench *Stage)
 {
-	int	mode;
 	int	offset;
 
-	(void)argv;
-	mode = Stage->mode;
 	offset = 0;
-	if (mode > 0 && (Stage->bench_mode) == 1)
-		offset = 2;
-	else if (mode > 0)
-		offset = 1;
+	if (Stage->bench_mode == 1)
+		offset++;
+	if (Stage->mode > 0)
+		offset++;
 	return (offset);
 }

@@ -6,11 +6,33 @@
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 12:24:41 by mhaddad           #+#    #+#             */
-/*   Updated: 2026/02/17 18:01:33 by mhaddad          ###   ########.fr       */
+/*   Updated: 2026/02/18 01:33:11 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
+
+static void	set_adaptive_mode(float disorder, t_bench *mode)
+{
+	if (disorder < 0.2f)
+		mode->adaptive_mode = 1;
+	else if (disorder < 0.5f)
+		mode->adaptive_mode = 2;
+	else
+		mode->adaptive_mode = 3;
+}
+
+static void	sort_small(t_stack *a, t_stack *b, t_bench *mode)
+{
+	if (a->size < 2 || is_sorted(a))
+		return ;
+	if (a->size == 2)
+		sa(a, mode);
+	else if (a->size == 3)
+		tiny_sort(a, mode);
+	else
+		selection_sort(a, b, mode);
+}
 
 float	disorder_calc(t_stack *a)
 {
@@ -39,25 +61,31 @@ float	disorder_calc(t_stack *a)
 	return ((float)mistakes / total_pairs);
 }
 
-/* void	disorder_check(t_stack *a, t_stack *b, t_bench *mode)
+void	disorder_check(t_stack *a, t_stack *b, t_bench *mode)
 {
 	float	disorder;
 
 	disorder = disorder_calc(a);
-	if (disorder < 0.2)
-		mode->adaptive_mode = 1;
-		simple_sort(a, b);
-	else if (disorder >= 0.5)
-		mode->adaptive_mode = 3;
-		radix_sort(a, b);
+	set_adaptive_mode(disorder, mode);
+	if (mode->adaptive_mode == 1)
+	{
+		low_disorder_sort(a, b, mode);
+	}
+	else if (mode->adaptive_mode == 2)
+	{
+		chunk_sort(a, b, mode);
+	}
 	else
-		mode->adaptive_mode = 2;
-		chunk_sort(a, b);
-} */
-
+		radix_sort(a, b, mode);
+}
 
 void	sort_controller(t_stack	*a, t_stack *b, t_bench *mode)
 {
+	if (a->size <= 5)
+	{
+		sort_small(a, b, mode);
+		return ;
+	}
 	if (mode->mode == 2)
 		selection_sort(a, b, mode);
 	else if (mode->mode == 3)
@@ -65,20 +93,7 @@ void	sort_controller(t_stack	*a, t_stack *b, t_bench *mode)
 	else if (mode->mode == 4)
 		radix_sort(a, b, mode);
 	else
-	{
-		if (a->size == 2)
-			sa(a, mode);
-		else if (a->size == 3)
-			tiny_sort(a, mode);
-		else if (a->size > 3)
-			selection_sort(a, b, mode);
-		/*else if (a->size > 5)
-			disorder_check(a, b);
-		else
-		{
-			error_exit();
-		} */
-	}
+		disorder_check(a, b, mode);
 }
 
 int	main(int argc, char **argv)
@@ -89,7 +104,7 @@ int	main(int argc, char **argv)
 
 	a = malloc(sizeof(t_stack));
 	b = malloc(sizeof(t_stack));
-	mode = calloc(1, sizeof(t_bench));
+	mode = ft_calloc(1, sizeof(t_bench));
 	if (!a || !b || !mode)
 		return (1);
 	init_stack(a, b);
@@ -102,10 +117,7 @@ int	main(int argc, char **argv)
 	}
 	parse_flags(argv, mode);
 	build(argc, argv, a, b, mode);
-	node_index(a);
-	if (!is_sorted(a))
-		sort_controller(a, b, mode);
-	free_stack(a,b);
+	free_stack(a, b);
 	free(mode);
 	return (0);
 }

@@ -55,7 +55,7 @@ typedef struct bench
 
 /*main*/
 float	disorder_calc(t_stack *a);
-/* void	disorder_check(t_stack *a, t_stack *b); */
+void	disorder_check(t_stack *a, t_stack *b, t_bench *mode);
 void	sort_controller(t_stack	*a, t_stack *b, t_bench *mode);
 int		main(int argc, char **argv);
 
@@ -82,6 +82,7 @@ void	error_exit(t_stack *a, t_stack *b, char **numbers);
 /* algo */
 void	tiny_sort(t_stack *stack, t_bench *op);
 void	node_index(t_stack *stack);
+void	low_disorder_sort(t_stack *a, t_stack *b, t_bench *op);
 void	selection_sort(t_stack *a, t_stack *b, t_bench *op);
 void	chunk_sort(t_stack *a, t_stack *b, t_bench *op);
 void	radix_sort(t_stack *a, t_stack *b, t_bench *op);
