@@ -58,7 +58,10 @@ void	low_disorder_sort(t_stack *a, t_stack *b, t_bench *op)
 			rra(a, op);
 	}
 	if (!is_sorted(a))
+	{
+		op->adaptive_mode = 2;
 		chunk_sort(a, b, op);
+	}
 }
 
 void	selection_sort(t_stack *a, t_stack *b, t_bench *op)

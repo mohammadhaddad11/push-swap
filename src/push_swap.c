@@ -37,12 +37,13 @@ void	sort_controller(t_stack	*a, t_stack *b, t_bench *mode)
 		chunk_sort(a, b, mode);
 	else if (mode->mode == 4)
 		radix_sort(a, b, mode);
-	else if (a->size <= 5)
-	{
-		sort_small(a, b, mode);
-	}
 	else
-		disorder_check(a, b, mode);
+	{
+		if (a->size <= 5)
+			sort_small(a, b, mode);
+		else
+			disorder_check(a, b, mode);
+	}
 }
 
 int	main(int argc, char **argv)

@@ -6,7 +6,7 @@
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/16 17:27:18 by mhaddad           #+#    #+#             */
-/*   Updated: 2026/02/18 01:27:25 by mhaddad          ###   ########.fr       */
+/*   Updated: 2026/02/18 10:39:50 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,18 @@ static const char	*mode_name(t_bench *bench)
 
 	mode = bench->mode;
 	if (mode == 2)
-		return ("simple / O(n^2)");
+		return ("Simple O(n^2)");
 	else if (mode == 3)
-		return ("medium / O(n*sqrt(n))");
+		return ("Medium O(n√n)");
 	else if (mode == 4)
-		return ("complex / O(n log n)");
+		return ("Complex O(n log n)");
 	if (bench->adaptive_mode == 1)
-		return ("adaptive / O(n)");
+		return ("Adaptive O(n^2)");
 	else if (bench->adaptive_mode == 2)
-		return ("adaptive / O(n*sqrt(n))");
+		return ("Adaptive O(n√n)");
 	else if (bench->adaptive_mode == 3)
-		return ("adaptive / O(n log n)");
-	return ("adaptive / O(n)");
+		return ("Adaptive O(n log n)");
+	return ("Adaptive O(n^2)");
 }
 
 void	bench(float disorder, t_bench *mode)

@@ -75,6 +75,14 @@ static void	parse_numbers(char **argv, t_stack *a, t_stack *b, int *has_numbers)
 			continue ;
 		}
 		numbers = ft_split(argv[i], ' ');
+		if (!numbers)
+			error_exit(a, b, numbers);
+		if (!numbers[0])
+		{
+			free_numbers(numbers);
+			i++;
+			continue ;
+		}
 		stack_build(a, b, numbers);
 		*has_numbers = 1;
 		i++;
