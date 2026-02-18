@@ -26,17 +26,21 @@ static void	sort_small(t_stack *a, t_stack *b, t_bench *mode)
 
 void	sort_controller(t_stack	*a, t_stack *b, t_bench *mode)
 {
-	if (a->size <= 5)
-	{
-		sort_small(a, b, mode);
-		return ;
-	}
 	if (mode->mode == 2)
-		selection_sort(a, b, mode);
+	{
+		if (a->size <= 5)
+			sort_small(a, b, mode);
+		else
+			selection_sort(a, b, mode);
+	}
 	else if (mode->mode == 3)
 		chunk_sort(a, b, mode);
 	else if (mode->mode == 4)
 		radix_sort(a, b, mode);
+	else if (a->size <= 5)
+	{
+		sort_small(a, b, mode);
+	}
 	else
 		disorder_check(a, b, mode);
 }
@@ -45,24 +49,22 @@ int	main(int argc, char **argv)
 {
 	t_stack	*a;
 	t_stack	*b;
-	t_bench	*mode;
+	t_bench	mode;
 
 	a = malloc(sizeof(t_stack));
 	b = malloc(sizeof(t_stack));
-	mode = ft_calloc(1, sizeof(t_bench));
-	if (!a || !b || !mode)
+	if (!a || !b)
 		return (1);
+	ft_bzero(&mode, sizeof(t_bench));
 	init_stack(a, b);
 	if (argc < 2)
 	{
 		free(a);
 		free(b);
-		free(mode);
 		return (0);
 	}
-	parse_flags(argv, mode);
-	build(argv, a, b, mode);
+	parse_flags(argv, &mode);
+	build(argv, a, b, &mode);
 	free_stack(a, b);
-	free(mode);
 	return (0);
 }

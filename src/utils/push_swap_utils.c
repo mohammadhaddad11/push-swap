@@ -42,31 +42,54 @@ static void	stack_build(t_stack *a, t_stack *b, char **numbers)
 		value = ft_atoi(numbers[j]);
 		if (value > INT_MAX || value < INT_MIN)
 			error_exit(a, b, numbers);
+		dup_checker(a, b, numbers, value);
 		new = new_node(value);
 		if (!new)
 			error_exit(a, b, numbers);
-		dup_checker(a, b, numbers, value);
 		stack_add_back(a, new);
 		j++;
 	}
 	free_numbers(numbers);
 }
 
-void	build(char **argv, t_stack *a, t_stack *b, t_bench *mode)
+static int	is_flag(char *arg)
+{
+	if (!ft_strcmp(arg, "--bench") || !ft_strcmp(arg, "--adaptive")
+		|| !ft_strcmp(arg, "--simple") || !ft_strcmp(arg, "--medium")
+		|| !ft_strcmp(arg, "--complex"))
+		return (1);
+	return (0);
+}
+
+static void	parse_numbers(char **argv, t_stack *a, t_stack *b, int *has_numbers)
 {
 	int		i;
 	char	**numbers;
-	float	initial_disorder;
 
-	i = 1 + ft_offset(mode);
-	if (!argv[i])
-		error_exit(a, b, NULL);
+	i = 1;
 	while (argv[i])
 	{
+		if (is_flag(argv[i]))
+		{
+			i++;
+			continue ;
+		}
 		numbers = ft_split(argv[i], ' ');
 		stack_build(a, b, numbers);
+		*has_numbers = 1;
 		i++;
 	}
+}
+
+void	build(char **argv, t_stack *a, t_stack *b, t_bench *mode)
+{
+	float	initial_disorder;
+	int		has_numbers;
+
+	has_numbers = 0;
+	parse_numbers(argv, a, b, &has_numbers);
+	if (!has_numbers)
+		error_exit(a, b, NULL);
 	initial_disorder = disorder_calc(a);
 	if ((mode->mode == 0 || mode->mode == 1) && initial_disorder < 0.2f)
 		mode->adaptive_mode = 1;
@@ -79,36 +102,4 @@ void	build(char **argv, t_stack *a, t_stack *b, t_bench *mode)
 		sort_controller(a, b, mode);
 	if (mode->bench_mode == 1)
 		bench(initial_disorder, mode);
-}
-
-void	num_checker(t_stack *a, t_stack *b, char **numbers, int j)
-{
-	int	i;
-
-	i = 0;
-	if (!numbers[j] || numbers[j][0] == '\0')
-		error_exit(a, b, numbers);
-	if (numbers[j][i] == '-' || numbers[j][i] == '+')
-		i++;
-	if (numbers[j][i] == '\0')
-		error_exit(a, b, numbers);
-	while (numbers[j][i])
-	{
-		if (!ft_isdigit(numbers[j][i]))
-			error_exit(a, b, numbers);
-		i++;
-	}
-}
-
-void	dup_checker(t_stack *a, t_stack *b, char **numbers, int value)
-{
-	t_node	*current;
-
-	current = a->top;
-	while (current)
-	{
-		if (current->value == value)
-			error_exit(a, b, numbers);
-		current = current->next;
-	}
 }

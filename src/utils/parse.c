@@ -22,29 +22,36 @@ int	ft_strcmp(const char *s1, const char *s2)
 	return ((unsigned char ) *s1 - (unsigned char ) *s2);
 }
 
-void	parse_flags(char **argv, t_bench *Stage)
+static int	mode_flag(char *arg)
 {
-	char	*arg1;
-	char	*arg2;
+	if (!ft_strcmp(arg, "--adaptive"))
+		return (1);
+	if (!ft_strcmp(arg, "--simple"))
+		return (2);
+	if (!ft_strcmp(arg, "--medium"))
+		return (3);
+	if (!ft_strcmp(arg, "--complex"))
+		return (4);
+	return (0);
+}
 
-	arg1 = argv[1];
-	arg2 = argv[2];
-	Stage->mode = 0;
-	Stage->bench_mode = 0;
-	if (arg1 && !ft_strcmp(arg1, "--bench"))
-		Stage->bench_mode = 1;
-	if ((arg1 && !ft_strcmp(arg1, "--adaptive"))
-		|| (arg2 && !ft_strcmp(arg2, "--adaptive")))
-		Stage->mode = 1;
-	else if ((arg1 && !ft_strcmp(arg1, "--simple"))
-		|| (arg2 && !ft_strcmp(arg2, "--simple")))
-		Stage->mode = 2;
-	else if ((arg1 && !ft_strcmp(arg1, "--medium"))
-		|| (arg2 && !ft_strcmp(arg2, "--medium")))
-		Stage->mode = 3;
-	else if ((arg1 && !ft_strcmp(arg1, "--complex"))
-		|| (arg2 && !ft_strcmp(arg2, "--complex")))
-		Stage->mode = 4;
+void	parse_flags(char **argv, t_bench *stage)
+{
+	int	i;
+	int	parsed_mode;
+
+	stage->mode = 0;
+	stage->bench_mode = 0;
+	i = 1;
+	while (argv[i])
+	{
+		if (!ft_strcmp(argv[i], "--bench"))
+			stage->bench_mode = 1;
+		parsed_mode = mode_flag(argv[i]);
+		if (parsed_mode != 0)
+			stage->mode = parsed_mode;
+		i++;
+	}
 }
 
 void	error_exit(t_stack *a, t_stack *b, char **numbers)
@@ -53,16 +60,4 @@ void	error_exit(t_stack *a, t_stack *b, char **numbers)
 	free_numbers(numbers);
 	write(2, "Error\n", 6);
 	exit(1);
-}
-
-int	ft_offset(t_bench *Stage)
-{
-	int	offset;
-
-	offset = 0;
-	if (Stage->bench_mode == 1)
-		offset++;
-	if (Stage->mode > 0)
-		offset++;
-	return (offset);
 }

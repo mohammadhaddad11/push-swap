@@ -1,75 +1,72 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   chunk_sort.c                                       :+:      :+:    :+:   */
+/*   chunk_sort.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/18 04:02:38 by mhaddad           #+#    #+#             */
-/*   Updated: 2026/02/18 04:02:38 by mhaddad          ###   ########.fr       */
+/*   Created: 2026/02/18 09:15:41 by mhaddad           #+#    #+#             */
+/*   Updated: 2026/02/18 09:15:49 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-static int	int_sqrt(int n)
+int	root_of(int x)
 {
-	int	r;
+	int	i;
 
-	r = 1;
-	while (r * r < n)
-		r++;
-	return (r);
+	i = 1;
+	while (i * i < x)
+		i++;
+	return (i);
 }
 
-static void	push_biggest_back(t_stack *a, t_stack *b, t_bench *op, int max_idx)
+void	push_to_b(t_stack *a, t_stack *b, t_bench *op, int chunk_range)
 {
-	while (b->top && b->top->index != max_idx)
+	int	i;
+	int	current;
+
+	current = chunk_range - 1;
+	while (a->size != 0)
 	{
-		if (node_counter(b->top, max_idx) <= (b->size + 1) / 2)
-			rb(b, op);
-		else
-			rrb(b, op);
+		i = 0;
+		while (i <= current && a->size != 0)
+		{
+			if (a->top->index <= current)
+				pb(a, b, op);
+			else
+				ra(a, op);
+			i++;
+		}
+		current += chunk_range;
 	}
-	pa(b, a, op);
 }
 
-static int	push_in_chunk(t_stack *a, t_stack *b, t_bench *op, int *limits)
+void	push_to_a(t_stack *b, t_stack *a, t_bench *op)
 {
-	if (a->top->index <= limits[0])
+	int	i;
+
+	i = b->size - 1;
+	while (b->size != 0)
 	{
-		pb(a, b, op);
-		rb(b, op);
-		return (1);
+		while (b->top->index != i)
+		{
+			if (node_counter(b->top, i) <= (b->size + 1) / 2)
+				rb(b, op);
+			else
+				rrb(b, op);
+		}
+		pa(b, a, op);
+		i--;
 	}
-	if (a->top->index <= limits[0] + limits[1])
-	{
-		pb(a, b, op);
-		return (1);
-	}
-	ra(a, op);
-	return (0);
 }
 
 void	chunk_sort(t_stack *a, t_stack *b, t_bench *op)
 {
-	int	total;
-	int	chunk_size;
-	int	next_idx;
-	int	current_max;
-	int	limits[2];
+	int	chunk_range;
 
-	total = (int)a->size;
-	chunk_size = (total / int_sqrt(total)) + 1;
-	next_idx = 0;
-	limits[1] = chunk_size;
-	while (a->size > 0)
-	{
-		limits[0] = next_idx;
-		if (push_in_chunk(a, b, op, limits))
-			next_idx++;
-	}
-	current_max = total - 1;
-	while (b->size > 0)
-		push_biggest_back(a, b, op, current_max--);
+	chunk_range = root_of(a->size);
+	push_to_b(a, b, op, chunk_range);
+	push_to_a(b, a, op);
 }
