@@ -6,10 +6,11 @@
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 19:14:39 by mhaddad           #+#    #+#             */
-/*   Updated: 2026/02/16 16:41:38 by mhaddad          ###   ########.fr       */
+/*   Updated: 2026/02/18 03:33:45 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 
 static int	is_space(char c)
 {

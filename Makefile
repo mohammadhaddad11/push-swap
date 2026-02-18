@@ -3,16 +3,17 @@ NAME = push_swap
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 
-SRC = push_swap.c bench.c algorithms.c \
-      Operations/push.c Operations/swap.c Operations/rotate.c Operations/reverse_rotate.c \
-      utils/parse.c utils/push_swap_utils.c utils/stack_utils.c utils/node_utils.c
+SRC = src/push_swap.c src/disorder.c src/bench.c \
+      src/algorithms/algorithms.c src/algorithms/chunk_sort.c src/algorithms/radix_sort.c \
+      src/operations/push.c src/operations/swap.c src/operations/rotate.c src/operations/reverse_rotate.c \
+      src/utils/parse.c src/utils/push_swap_utils.c src/utils/stack_utils.c src/utils/node_utils.c
 
 OBJ = $(SRC:.c=.o)
 
 LIBFT = libft/libft.a
 PRINTF = dprintf/libftprintf.a
 
-INCLUDES = -I. -Ilibft -Idprintf
+INCLUDES = -I. -Iinclude -Ilibft -Idprintf
 
 all: $(NAME)
 

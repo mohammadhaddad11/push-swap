@@ -12,7 +12,6 @@
 
 #include "ft_dprintf.h"
 
-
 int	ft_print_char(int fd, char c)
 {
 	return (write(fd, &c, 1));
