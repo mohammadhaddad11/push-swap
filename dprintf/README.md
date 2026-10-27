@@ -1,78 +1,33 @@
-*This activity has been created as part of the 42 curriculum by mhaddad.*
+*42 curriculum utility · mhaddad*
 
-# ft_printf
+# ft_dprintf (push_swap dependency)
 
-## Description
-This project recreates the basic behavior of the C standard library `dprintf` function.  
-The goal is to understand formatted output and variadic functions in C.
+A small variadic formatter that writes to a chosen file descriptor. `push_swap` uses it for diagnostic and benchmark output without mixing that output into its instruction stream.
 
 ## Instructions
 
-### Compilation
-```bash
+Requires a C compiler, Make, and `ar`. From this directory:
+
+```sh
 make
 ```
 
-### Usage
-Include the header in your project:
-```bash
-#include "ft_dprintf.h"
-```
-Compile with:
-```bash
-gcc main.c libftprintf.a
-```
-## Supported conversions
+The Makefile produces `libftprintf.a`. Include `ft_dprintf.h` when using the library from C code, and link the archive after your object files. The entry point is `ft_dprintf(int fd, const char *format, ...)`.
 
-| Specifier | Description                  |
-|----------|------------------------------|
-| `%c`     | Character                    |
-| `%s`     | String                       |
-| `%p`     | Pointer                      |
-| `%d`     | Signed decimal integer       |
-| `%i`     | Signed decimal integer       |
-| `%u`     | Unsigned decimal integer     |
-| `%x`     | Hexadecimal (lowercase)      |
-| `%X`     | Hexadecimal (uppercase)      |
-| `%%`     | Percent sign                 |
-## Algorithm and Data Structure
-The ft_dprintf function parses the format string character by character.
+## Implementation
 
-Normal characters are printed directly.
+The formatter scans the format string and dispatches supported conversions using `va_list`, `va_start`, `va_arg`, and `va_end`. Numeric values are converted by recursive helper functions; output is written to the requested descriptor.
 
-When % is encountered, the following character determines the conversion type.
+Supported specifiers: `%c`, `%s`, `%p`, `%d`, `%i`, `%u`, `%x`, `%X`, and `%%`.
 
-Variable arguments are handled using va_list, va_start, va_arg, and va_end.
+This is a focused utility for the parent project, not a complete replacement for every libc formatting feature. Formatting flags, width, and precision are absent; write failures are not consistently propagated. Its entry point and helper signatures differ from the standalone `ft_printf` version.
 
-The function parses the format string character by character.
-When % is found, the corresponding conversion is handled using va_list.
-
-Each format is implemented in a separate helper function.
-No complex data structures are used
 ## Resources
-man dprintf
 
-man stdarg
+- Manual pages: `dprintf(3)`, `printf(3)`, `stdarg(3)`, `write(2)`
+- [GNU C Library documentation](https://www.gnu.org/software/libc/manual/html_node/)
+- 42 intra resources and the project subject, as recorded in the original README
 
-GNU C Library documentation
+## AI Usage
 
-42 intra resources and subject PDF
-
-### AI Usage
-AI tools were used only for:
-
-Clarifying concepts related to va_list
-
-Understanding edge cases of the original dprintf
-
-All the code logic, structure, and implementation were written and adapted manually.
-
-Notes
-
-This project helped me better understand:
-
-Variadic functions
-
-Memory-safe string handling
-
-Code organization in C
+Earlier documentation records AI help with `va_list` concepts and libc `dprintf` edge cases, while attributing the implementation to manual work. This refresh used AI-assisted documentation review; the formatter implementation was not changed.

@@ -1,138 +1,81 @@
-*This activity has been created as part of the 42 curriculum by mhaddad, aselfrie.*
+*This project was created as part of the 42 curriculum by mhaddad and aselfrie.*
 
 # push_swap
 
+Sort integers using two stacks and a limited instruction set. Instead of printing sorted numbers, the program prints the operations needed to sort them.
+
 ## Description
-`push_swap` is a 42 algorithm project: sort a list of integers using two stacks (`a` and `b`) and only the allowed stack instructions.
 
-The objective is to output a valid sequence of operations with the lowest possible number of actions.
+`push_swap` begins with input values on stack A and an empty stack B. Its goal is to leave A sorted and B empty while minimizing the number of instructions.
 
-This implementation provides:
-- Fixed modes: `--simple`, `--medium`, `--complex`
-- Adaptive mode: `--adaptive` (also used by default when no mode flag is provided)
-- Benchmark mode: `--bench` (stats printed to `stderr`)
-
-Allowed operations in the project:
-
-| Code | Action |
-|---|---|
-| `sa`, `sb`, `ss` | swap top elements |
-| `pa`, `pb` | push top element between stacks |
-| `ra`, `rb`, `rr` | rotate (top to bottom) |
-| `rra`, `rrb`, `rrr` | reverse rotate (bottom to top) |
+| Instructions | Action |
+| --- | --- |
+| `sa`, `sb`, `ss` | Swap the top two values of A, B, or both |
+| `pa`, `pb` | Move the top value to A or B, respectively |
+| `ra`, `rb`, `rr` | Rotate the top value to the bottom of A, B, or both |
+| `rra`, `rrb`, `rrr` | Move the bottom value to the top of A, B, or both |
 
 ## Instructions
-### Compilation
-```bash
+
+Requirements: C compiler, Make, and `ar` for the bundled libraries.
+
+```sh
+git clone git@github.com:mohammadhaddad11/push-swap.git
+cd push-swap
 make
-```
-
-### Execution
-```bash
-./push_swap [--bench] [--adaptive|--simple|--medium|--complex] <numbers...>
-```
-
-Examples:
-```bash
 ./push_swap 3 2 1
-./push_swap --simple 4 2 1 3
-./push_swap --medium 5 1 4 2 3
-./push_swap --complex 8 3 7 1 6 2 5 4
 ./push_swap --bench --adaptive 8 3 7 1 6 2 5 4
 ```
 
-Input rules and behavior:
-- Invalid input (non-integer token, overflow, duplicates, or no numbers) prints `Error` to `stderr` and exits.
-- If input is already sorted, the program prints no operations.
-- `--bench` prints initial disorder, selected strategy class, total operation count, and per-operation counters.
+Supported options:
 
-## Project-Specific Notes
-- Stack parsing accepts quoted groups too (example: `./push_swap "3 2 1"`), because arguments are split internally before validation.
-- Index normalization is done by `node_index()` before sorting logic starts.
-- Mode dispatch in this codebase:
-- `--simple` -> `selection_sort` (with `tiny_sort` for small cases)
-- `--medium` -> `chunk_sort`
-- `--complex` -> `radix_sort`
-- `--adaptive` or no mode flag -> `disorder_check`
-- Adaptive thresholds in this project are hardcoded as:
-- `< 0.20` low disorder, `< 0.50` medium disorder, otherwise high disorder.
-- Low-disorder path has a safety fallback: if not fully sorted after `low_disorder_sort`, it promotes to `chunk_sort`.
-- Bench output labels are exactly:
-- `Simple O(n^2)`, `Medium O(n√n)`, `Complex O(n log n)`
-- `Adaptive O(n^2)`, `Adaptive O(n√n)`, `Adaptive O(n log n)`
+| Mode | Approach |
+| --- | --- |
+| `--simple` | Selection-based extraction and tiny sorting |
+| `--medium` | Chunk-based sorting |
+| `--complex` | Binary radix sorting on normalized indexes |
+| `--adaptive` | Selects a strategy using the initial disorder ratio |
+| `--bench` | Sends operation statistics to `stderr` |
+
+With no mode option, adaptive selection is used. Already sorted input emits no operations. Invalid or duplicate input produces `Error` on standard error. Quoted space-separated input is also accepted. Running with no arguments succeeds silently; options without numbers are rejected.
+
+## Algorithms and Design Decisions
+
+**Index normalization:** values are ranked from `0` to `n - 1`, so the sorting strategies operate on relative order rather than magnitudes.
+
+**Selection:** move small values to B, sort the small remaining set in A, then restore them.
+
+**Chunking:** increase a rank threshold while scanning A and pushing eligible values to B, then restore larger ranks first. The current inner loop counts both pushes and rotations; it does not count only successful pushes.
+
+**Radix:** examine ranking bits from least to most significant, pushing zeros to B and rotating ones within A.
+
+**Adaptive:** for inputs larger than five, disorder below `0.20` selects `low_disorder_sort`; below `0.50` selects chunks; otherwise radix is used. The low-disorder pass swaps adjacent out-of-order top values while rotating, aligns rank zero, and falls back to chunk sorting if A is still unsorted. Inputs of at most five use the small-sort path. This describes the current source after the earlier sorting update was reverted; no reverted code is restored by this README refresh.
+
+Complexity labels used by the benchmark describe the sorting strategies, not a formal end-to-end runtime bound for the whole executable. Ranking and inversion counting are quadratic, and rotations traverse lists. Adaptive selection is a heuristic, not a guarantee of optimal operation count.
+
+## Project Structure and Limitations
+
+- `src/`: parsing, operations, algorithms, and benchmark output
+- [`libft/`](libft/README.md): the project's bundled C utility library
+- [`dprintf/`](dprintf/README.md): descriptor-aware formatted output used by the program
+
+The bundled libraries are maintained with this project because they have project-specific behavior and must not be casually replaced with the standalone `libft` or `ft_printf` repositories. The `long`-returning integer parser can overflow on extremely long numeric tokens before the `int` range check; arbitrary-length parsing is not overflow-safe.
+
+This refresh does not restore the reverted test harness or reuse its results as verification of this source version.
+
+## Contributors
+
+The existing project documentation credits **mhaddad** and **aselfrie**. Their attribution and source headers are preserved.
 
 ## Resources
-Classic references:
-- 42 subject and campus project guidelines
-- Data structures and algorithms course (university coursework)
-- Sorting algorithms fundamentals: https://www.youtube.com/watch?v=rbbTd-gkajw&pp=ygUPc29ydCBhbGdvcml0aG0g
-- Push swap tutorials:
-	- https://www.youtube.com/watch?v=OaG81sDEpVk&t=2945s&pp=ygUMcHVzaCBzd2FwIDQy
-	- https://www.youtube.com/watch?v=wRvipSG4Mmk
 
-Assistance used for this project:
-- README documentation structure and wording
-- Clarity and consistency review
-- Testing and validation
+- 42 project subject, campus project guidelines, and evaluation guidelines
+- Data structures and algorithms university coursework, as recorded in the original README
+- [C programming reference](https://en.cppreference.com/w/c)
+- [Sorting algorithms overview](https://www.youtube.com/watch?v=rbbTd-gkajw)
+- [Push Swap walkthrough](https://www.youtube.com/watch?v=OaG81sDEpVk&t=2945s)
+- [Additional Push Swap tutorial](https://www.youtube.com/watch?v=wRvipSG4Mmk)
 
-## Algorithms and Justification
-This project uses several strategies because input disorder and size vary a lot; one static strategy is usually not optimal.
+## AI Usage
 
-### 1. `--simple` (selection extraction + tiny sort)
-Flow:
-- Repeatedly bring the next smallest indexed node to top of `a`
-- Push it to `b` with `pb`
-- Sort the remaining 3 nodes in `a` with `tiny_sort`
-- Push everything back to `a` with `pa`
-
-Why:
-- Straightforward and deterministic
-- Good for small inputs and for validating correctness quickly
-
-Complexity target:
-- `O(n^2)`
-
-### 2. `--medium` (chunk-based partitioning)
-Flow:
-- Use chunk range close to `sqrt(n)`
-- Push values from `a` to `b` by index windows
-- Rebuild `a` by pulling highest indexes first from `b`
-
-Why:
-- Reduces unnecessary rotations compared to pure selection-style passes
-- Good middle ground for medium disorder / medium input sizes
-
-Complexity target:
-- Around `O(n * sqrt(n))` in this model
-
-### 3. `--complex` (binary radix on normalized indexes)
-Flow:
-- Normalize values to indexes `0..n-1`
-- Process bits from least significant to most significant
-- For each bit: `pb` when bit is `0`, `ra` when bit is `1`
-- Move all elements back from `b` to `a` after each pass
-
-Why:
-- Predictable behavior on large random inputs
-- Reliable operation counts for high-disorder cases
-
-Complexity target:
-- `O(n log n)` in this implementation model
-
-### 4. Adaptive mode (`--adaptive` or default)
-Flow:
-- Compute initial disorder using inversion ratio: `disorder = inversions / total_pairs`
-- Route to:
-- `disorder < 0.20` -> low-disorder pass (`low_disorder_sort`)
-- `0.20 <= disorder < 0.50` -> chunk sort
-- `disorder >= 0.50` -> radix sort
-- If low-disorder pass is not enough, it promotes to chunk sort in the same run
-
-Why:
-- Matches algorithm cost to the observed input pattern
-- Keeps small/near-sorted inputs cheap while preserving scalability
-
-Complexity targets by adaptive branch:
-- Low: near-linear pass in practice (`O(n)` target)
-- Medium: chunk behavior (`O(n * sqrt(n))`)
-- High: radix behavior (`O(n log n)`)
+Earlier documentation records assistance with README structure, clarity review, and testing/validation. This refresh used AI-assisted documentation and source review only. No algorithm, test, or build file was changed, and no historical verification result is presented as a fresh full-suite run.
