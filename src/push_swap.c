@@ -55,11 +55,7 @@ int	main(int argc, char **argv)
 	a = malloc(sizeof(t_stack));
 	b = malloc(sizeof(t_stack));
 	if (!a || !b)
-	{
-		free(a);
-		free(b);
 		return (1);
-	}
 	ft_bzero(&mode, sizeof(t_bench));
 	init_stack(a, b);
 	if (argc < 2)

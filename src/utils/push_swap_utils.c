@@ -99,15 +99,12 @@ void	build(char **argv, t_stack *a, t_stack *b, t_bench *mode)
 	if (!has_numbers)
 		error_exit(a, b, NULL);
 	initial_disorder = disorder_calc(a);
-	if (mode->mode == 0 || mode->mode == 1)
-	{
-		if (initial_disorder < 0.2f)
-			mode->adaptive_mode = 1;
-		else if (initial_disorder < 0.5f)
-			mode->adaptive_mode = 2;
-		else
-			mode->adaptive_mode = 3;
-	}
+	if ((mode->mode == 0 || mode->mode == 1) && initial_disorder < 0.2f)
+		mode->adaptive_mode = 1;
+	else if ((mode->mode == 0 || mode->mode == 1) && initial_disorder < 0.5f)
+		mode->adaptive_mode = 2;
+	else if (mode->mode == 0 || mode->mode == 1)
+		mode->adaptive_mode = 3;
 	node_index(a);
 	if (!is_sorted(a))
 		sort_controller(a, b, mode);

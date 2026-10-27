@@ -5,7 +5,7 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhaddad <mhaddad@learner.42.tech>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/18 09:15:41 by aselfrie          #+#    #+#             */
+/*   Created: 2026/02/18 09:15:41 by mhaddad           #+#    #+#             */
 /*   Updated: 2026/02/18 09:15:49 by mhaddad          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -31,15 +31,13 @@ void	push_to_b(t_stack *a, t_stack *b, t_bench *op, int chunk_range)
 	while (a->size != 0)
 	{
 		i = 0;
-		while (i < chunk_range && a->size != 0)
+		while (i <= current && a->size != 0)
 		{
 			if (a->top->index <= current)
-			{
 				pb(a, b, op);
-				i++;
-			}
 			else
 				ra(a, op);
+			i++;
 		}
 		current += chunk_range;
 	}
