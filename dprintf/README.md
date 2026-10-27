@@ -1,78 +1,34 @@
-*This activity has been created as part of the 42 curriculum by mhaddad.*
+*42 curriculum formatter dependency by mhaddad.*
 
-# ft_printf
+# ft_dprintf
 
-## Description
-This project recreates the basic behavior of the C standard library `dprintf` function.  
-The goal is to understand formatted output and variadic functions in C.
+Descriptor-aware formatting used by push_swap to send benchmark diagnostics to
+stderr while keeping the sorting instruction stream on stdout.
 
 ## Instructions
 
-### Compilation
-```bash
-make
+The parent Makefile builds this dependency automatically. Running `make` here
+creates **`libftprintf.a`**; the archive retains its historical name. Include
+`ft_dprintf.h` and link the archive after the calling object files.
+
+```c
+ft_dprintf(2, "operations: %u\n", 42u);
 ```
 
-### Usage
-Include the header in your project:
-```bash
-#include "ft_dprintf.h"
-```
-Compile with:
-```bash
-gcc main.c libftprintf.a
-```
-## Supported conversions
+## Technical Implementation
 
-| Specifier | Description                  |
-|----------|------------------------------|
-| `%c`     | Character                    |
-| `%s`     | String                       |
-| `%p`     | Pointer                      |
-| `%d`     | Signed decimal integer       |
-| `%i`     | Signed decimal integer       |
-| `%u`     | Unsigned decimal integer     |
-| `%x`     | Hexadecimal (lowercase)      |
-| `%X`     | Hexadecimal (uppercase)      |
-| `%%`     | Percent sign                 |
-## Algorithm and Data Structure
-The ft_dprintf function parses the format string character by character.
+`ft_dprintf(int fd, const char *format, ...)` scans the format and dispatches
+`c`, `s`, `p`, `d`, `i`, `u`, `x`, `X`, and `%` conversions. Helpers receive the
+destination descriptor; integer conversion is recursive and output is
+unbuffered. This is not a full formatting-flags/width/precision implementation,
+and write failures are not consistently propagated.
 
-Normal characters are printed directly.
+Do not substitute the standalone `ft_printf` directory: its entry point and
+helper signatures differ. The parent benchmark checks verified output-channel
+separation, not complete formatter equivalence to libc.
 
-When % is encountered, the following character determines the conversion type.
+## Resources and AI Usage
 
-Variable arguments are handled using va_list, va_start, va_arg, and va_end.
-
-The function parses the format string character by character.
-When % is found, the corresponding conversion is handled using va_list.
-
-Each format is implemented in a separate helper function.
-No complex data structures are used
-## Resources
-man dprintf
-
-man stdarg
-
-GNU C Library documentation
-
-42 intra resources and subject PDF
-
-### AI Usage
-AI tools were used only for:
-
-Clarifying concepts related to va_list
-
-Understanding edge cases of the original dprintf
-
-All the code logic, structure, and implementation were written and adapted manually.
-
-Notes
-
-This project helped me better understand:
-
-Variadic functions
-
-Memory-safe string handling
-
-Code organization in C
+See `stdarg(3)`, `write(2)`, and the [parent documentation](../README.md).
+AI assisted this dependency's documentation review; the implementation was
+preserved.

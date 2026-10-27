@@ -1,138 +1,136 @@
-*This activity has been created as part of the 42 curriculum by mhaddad, aselfrie.*
+*This project was created as part of the 42 curriculum by mhaddad and aselfrie.*
 
 # push_swap
 
 ## Description
-`push_swap` is a 42 algorithm project: sort a list of integers using two stacks (`a` and `b`) and only the allowed stack instructions.
 
-The objective is to output a valid sequence of operations with the lowest possible number of actions.
-
-This implementation provides:
-- Fixed modes: `--simple`, `--medium`, `--complex`
-- Adaptive mode: `--adaptive` (also used by default when no mode flag is provided)
-- Benchmark mode: `--bench` (stats printed to `stderr`)
-
-Allowed operations in the project:
-
-| Code | Action |
-|---|---|
-| `sa`, `sb`, `ss` | swap top elements |
-| `pa`, `pb` | push top element between stacks |
-| `ra`, `rb`, `rr` | rotate (top to bottom) |
-| `rra`, `rrb`, `rrr` | reverse rotate (bottom to top) |
+Sort distinct signed integers using two stacks and a restricted instruction
+set. The program prints instructions rather than the sorted numbers. This
+implementation explores several sorting strategies, rank normalization, and
+adaptive selection based on the initial inversion ratio.
 
 ## Instructions
-### Compilation
-```bash
+
+Requirements: a C compiler, Make, and `ar`. The required library sources are
+included; no submodules or external sorting dependencies are needed.
+
+```sh
+git clone git@github.com:mohammadhaddad11/push-swap.git
+cd push-swap
 make
-```
-
-### Execution
-```bash
-./push_swap [--bench] [--adaptive|--simple|--medium|--complex] <numbers...>
-```
-
-Examples:
-```bash
 ./push_swap 3 2 1
-./push_swap --simple 4 2 1 3
-./push_swap --medium 5 1 4 2 3
-./push_swap --complex 8 3 7 1 6 2 5 4
+./push_swap --medium "8 3 7 1 6 2 5 4"
 ./push_swap --bench --adaptive 8 3 7 1 6 2 5 4
+python3 tests/verify.py
 ```
 
-Input rules and behavior:
-- Invalid input (non-integer token, overflow, duplicates, or no numbers) prints `Error` to `stderr` and exits.
-- If input is already sorted, the program prints no operations.
-- `--bench` prints initial disorder, selected strategy class, total operation count, and per-operation counters.
+`make clean`, `make fclean`, and `make re` clean objects, remove the executable
+and dependency archives, and rebuild respectively. Numeric arguments may be
+individual tokens or quoted groups separated by literal spaces. Duplicates,
+malformed numbers, and values outside the `int` range print `Error` to stderr.
+No arguments succeeds silently. Flags without numbers are rejected. Empty
+groups may be skipped when other valid numbers exist. Sorted input emits no
+sorting instructions. The last recognized strategy flag wins.
 
-## Project-Specific Notes
-- Stack parsing accepts quoted groups too (example: `./push_swap "3 2 1"`), because arguments are split internally before validation.
-- Index normalization is done by `node_index()` before sorting logic starts.
-- Mode dispatch in this codebase:
-- `--simple` -> `selection_sort` (with `tiny_sort` for small cases)
-- `--medium` -> `chunk_sort`
-- `--complex` -> `radix_sort`
-- `--adaptive` or no mode flag -> `disorder_check`
-- Adaptive thresholds in this project are hardcoded as:
-- `< 0.20` low disorder, `< 0.50` medium disorder, otherwise high disorder.
-- Low-disorder path has a safety fallback: if not fully sorted after `low_disorder_sort`, it promotes to `chunk_sort`.
-- Bench output labels are exactly:
-- `Simple O(n^2)`, `Medium O(n√n)`, `Complex O(n log n)`
-- `Adaptive O(n^2)`, `Adaptive O(n√n)`, `Adaptive O(n log n)`
+### Instructions emitted
+
+| Instruction | Meaning |
+| --- | --- |
+| `sa`, `sb`, `ss` | Swap the top two elements of A, B, or both |
+| `pa`, `pb` | Move the top element to A or B |
+| `ra`, `rb`, `rr` | Move the top element to the bottom of A, B, or both |
+| `rra`, `rrb`, `rrr` | Move the bottom element to the top of A, B, or both |
+
+`--bench` sends disorder, strategy labels, totals, and operation counters to
+stderr, leaving stdout available for a checker. Combined operations count once.
+
+## Technical Implementation
+
+Nodes are doubly linked and store the original value and a normalized rank.
+Stack structures hold size, top, and tail fields. Ranking counts the smaller
+values for each node, producing indexes `0..n-1`. Validation rejects duplicate
+values before sorting. Error paths release the token arrays and stacks.
+
+The bundled [`libft`](libft/README.md) deliberately uses a `long`-returning
+`ft_atoi`, unlike the standalone libft interface. [`dprintf`](dprintf/README.md)
+provides descriptor-aware formatting for benchmark diagnostics. Replacing either
+dependency with a similarly named library can break the interface.
+
+## Algorithms and Data Structures
+
+| Mode | Implemented strategy |
+| --- | --- |
+| `--simple` | Rotate each next minimum rank into position, push it to B, tiny-sort the last three, then restore B |
+| `--medium` | Push increasing rank windows of width `ceil(sqrt(n))` to B; restore maximum ranks first |
+| `--complex` | Binary least-significant-bit radix sort on ranks: zero bits to B, one bits rotated through A, then restore B |
+| Default / `--adaptive` | Select the strategy from the inversion ratio; inputs of at most five use the small-sort path |
+
+For larger adaptive inputs, disorder is inverted pairs divided by all position
+pairs. Below `0.20` selects selection; from `0.20` to below `0.50` selects chunks;
+otherwise radix is selected. This is a heuristic, not an optimality guarantee.
+
+Preprocessing is quadratic. Rotations traverse the linked list despite the
+stored tail field. Thus the printed `O(n²)`, `O(n√n)`, and `O(n log n)` strategy
+labels are not end-to-end runtime guarantees. Small adaptive runs may also
+display the disorder-class label rather than their actual tiny-sort path.
+
+## Design Decisions and Source Reconciliation
+
+Instruction generation is separated from parsing and benchmark reporting.
+Normalized nonnegative ranks let radix sorting handle negative input values
+without adding sign-specific sorting logic.
+
+The publication merge adopts the local chunk-window counting correction,
+allocation-failure cleanup in `main`, adaptive routing, and contributor details.
+The remote `src/algorithms/algorithms.c` already contains the same tiny-sort and
+selection bodies as local `simple_sort.c`, so its established Makefile path is
+retained. Its older `low_disorder_sort` helper remains available in the source
+but is not selected by the current controller. The remote radix size guard is
+also retained. No new sorting algorithm was introduced.
+
+## Verification and Limitations
+
+On Fedora, 2026-10-27, `make re` passed with `-Wall -Wextra -Werror`.
+[`tests/verify.py`](tests/verify.py) passed **685 process checks**, independently
+interpreting every emitted instruction. Coverage includes all permutations of
+sizes 1–5 in four modes, seeded larger inputs, sorted/reversed/nearly sorted
+inputs, quoted groups, integer boundaries, and input-error behavior.
+
+One seeded sample per size produced the following operation counts. These are
+reproducible observations, not averages or grading guarantees:
+
+| Size | Adaptive | Simple | Medium | Complex |
+| --- | ---: | ---: | ---: | ---: |
+| 6 | 29 | 12 | 18 | 29 |
+| 20 | 160 | 80 | 88 | 160 |
+| 100 | 1084 | 1446 | 815 | 1084 |
+| 500 | 7890 | 32388 | 7890 | 6784 |
+
+**Known input limitation:** a Clang UBSan probe with a very long numeric token,
+such as `999999999999999999999999999999999`, detects signed `long` overflow in
+the bundled `ft_atoi` before the range check. Ordinary out-of-`int` bounds were
+rejected in the checks; arbitrary-length numeric parsing is not overflow-safe.
+The original parsing code is preserved. No full memory-leak certification or
+official 42 evaluation is claimed.
+
+## Contributors
+
+The existing local documentation attributes main flow, parsing/validation,
+disorder routing, benchmarking, and integration cleanup to **mhaddad**; sorting
+strategies, stack operations, and node utilities to **aselfrie**. Source headers
+and existing credits are retained.
 
 ## Resources
-Classic references:
-- 42 subject and campus project guidelines
-- Data structures and algorithms course (university coursework)
-- Sorting algorithms fundamentals: https://www.youtube.com/watch?v=rbbTd-gkajw&pp=ygUPc29ydCBhbGdvcml0aG0g
-- Push swap tutorials:
-	- https://www.youtube.com/watch?v=OaG81sDEpVk&t=2945s&pp=ygUMcHVzaCBzd2FwIDQy
-	- https://www.youtube.com/watch?v=wRvipSG4Mmk
 
-Assistance used for this project:
-- README documentation structure and wording
-- Clarity and consistency review
-- Testing and validation
+- [Radix sorting](https://en.wikipedia.org/wiki/Radix_sort).
+- [Inversions](https://en.wikipedia.org/wiki/Inversion_(discrete_mathematics)).
+- [VisuAlgo](https://visualgo.net/en) for data-structure visualization.
+- Documentation presentation informed by [oweidat05/push-swap-42](https://github.com/oweidat05/push-swap-42) and [AhmadNajiKam/Push_Swap](https://github.com/AhmadNajiKam/Push_Swap); their algorithms and performance claims were not imported.
 
-## Algorithms and Justification
-This project uses several strategies because input disorder and size vary a lot; one static strategy is usually not optimal.
+## AI Usage
 
-### 1. `--simple` (selection extraction + tiny sort)
-Flow:
-- Repeatedly bring the next smallest indexed node to top of `a`
-- Push it to `b` with `pb`
-- Sort the remaining 3 nodes in `a` with `tiny_sort`
-- Push everything back to `a` with `pa`
-
-Why:
-- Straightforward and deterministic
-- Good for small inputs and for validating correctness quickly
-
-Complexity target:
-- `O(n^2)`
-
-### 2. `--medium` (chunk-based partitioning)
-Flow:
-- Use chunk range close to `sqrt(n)`
-- Push values from `a` to `b` by index windows
-- Rebuild `a` by pulling highest indexes first from `b`
-
-Why:
-- Reduces unnecessary rotations compared to pure selection-style passes
-- Good middle ground for medium disorder / medium input sizes
-
-Complexity target:
-- Around `O(n * sqrt(n))` in this model
-
-### 3. `--complex` (binary radix on normalized indexes)
-Flow:
-- Normalize values to indexes `0..n-1`
-- Process bits from least significant to most significant
-- For each bit: `pb` when bit is `0`, `ra` when bit is `1`
-- Move all elements back from `b` to `a` after each pass
-
-Why:
-- Predictable behavior on large random inputs
-- Reliable operation counts for high-disorder cases
-
-Complexity target:
-- `O(n log n)` in this implementation model
-
-### 4. Adaptive mode (`--adaptive` or default)
-Flow:
-- Compute initial disorder using inversion ratio: `disorder = inversions / total_pairs`
-- Route to:
-- `disorder < 0.20` -> low-disorder pass (`low_disorder_sort`)
-- `0.20 <= disorder < 0.50` -> chunk sort
-- `disorder >= 0.50` -> radix sort
-- If low-disorder pass is not enough, it promotes to chunk sort in the same run
-
-Why:
-- Matches algorithm cost to the observed input pattern
-- Keeps small/near-sorted inputs cheap while preserving scalability
-
-Complexity targets by adaptive branch:
-- Low: near-linear pass in practice (`O(n)` target)
-- Medium: chunk behavior (`O(n * sqrt(n))`)
-- High: radix behavior (`O(n log n)`)
+The existing README records AI support for documentation, clarity review, and
+testing suggestions. This publication additionally used an AI assistant for
+source comparison, documentation, and an independent operation-stream checker.
+The sorting implementation remains the team's work; verification findings are
+reported without silently repairing the original algorithms.
